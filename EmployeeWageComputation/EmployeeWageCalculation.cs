@@ -3,41 +3,60 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace EmployeeWageComputation
 {
-    class EmployeeWageCalculation
+    class EmpWageBuilderObject
     {
-        public const int WAGE_PR_HR = 20, FULL_DAY_HOUR = 8, HALF_DAY_HOUR = 4, PRESENT = 1, HALF_DAY = 2, TOTAL_DAYS = 20, TOTAL_HOUR = 100;
-        int totalSalary, empHr, totalEmpHrs = 0, totalWorkingDays = 0;
-        public int ComputeEmployeeWage(string company, int empRatePrHr, int numOfWorkingDays, int maxHourPrMonth)
+        public const int IS_PART_TIME = 1;
+        public const int IS_FULL_TIME = 2;
+        private string company;
+        private int empRatePerHour;
+        private int numOfWorkingDays;
+        private int maxHourPrMonth;
+        private int totalEmpWage;
+        public EmpWageBuilderObject (string company, int empRatePrHr, int numOfWorkingDays, int maxHourPrMonth)
         {
-            Random rand = new Random();
-            int empCheck = rand.Next(0, 3);
-            while (totalEmpHrs <= maxHourPrMonth && totalWorkingDays <= numOfWorkingDays)
+            this.company = company;
+            this.empRatePerHour = empRatePrHr;
+            this.numOfWorkingDays = numOfWorkingDays;
+            this.maxHourPrMonth = maxHourPrMonth;
+        }
+        public void computeEmpWage()
+        {
+            int empHrs = 0, totalEmpHrs = 0 , totalWorkingDays  = 0 ;
+           
+            while (totalEmpHrs <= this.maxHourPrMonth && totalWorkingDays <= numOfWorkingDays)
             {
                 totalWorkingDays++;
+                Random random = new Random();
+                int empCheck = random.Next(0,3);
                 switch (empCheck)
                 {
-                    case PRESENT:
-                        this.empHr += FULL_DAY_HOUR;
+                    case IS_PART_TIME:
+                        empHrs = 4;
                         break;
-                    case HALF_DAY:
-                        this.empHr += HALF_DAY_HOUR;
+                    case IS_FULL_TIME:
+                        empHrs = 8;
                         break;
                     default:
-                        Console.WriteLine("Employee is Absent for the Day");
+                        empHrs = 0;
                         break;
                 }
-                totalEmpHrs += empHr;
-                Console.WriteLine("Day#:" + totalWorkingDays + "Emp Hrs : " + empHr);
+                totalEmpHrs += empHrs;
+                Console.WriteLine("Day#:" + totalWorkingDays + "Emp Hrs : " + empHrs);
 
             }
-            this.totalSalary = WAGE_PR_HR * totalEmpHrs;
-            Console.WriteLine("Here is the Monthly Wage of Emp." + this.totalSalary);
-            return totalSalary;
+            totalEmpWage = totalEmpHrs * this.empRatePerHour;
+            Console.WriteLine("Total Emp Wage For Company :" + company +"is :"+ totalEmpWage);
+            
+        }
+        public string Tostring()
+        {
+            return "Total Emp Wage For Company :" + this.company + "is:" + this.totalEmpWage;
         }
     }
 }
